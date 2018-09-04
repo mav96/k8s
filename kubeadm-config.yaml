@@ -1,0 +1,10 @@
+apiVersion: kubeadm.k8s.io/v1alpha2
+kind: MasterConfiguration
+#kubernetesVersion: v1.11.2	
+apiServerCertSANs:
+- "kubernetes.selit.ru"
+api:
+    controlPlaneEndpoint: "kubernetes.selit.ru:6443"
+networking:
+    podSubnet: ""
+

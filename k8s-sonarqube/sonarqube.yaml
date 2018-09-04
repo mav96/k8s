@@ -1,0 +1,67 @@
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: sonarqube
+spec:
+  replicas: 1
+  template:
+    metadata:
+      name: sonarqube
+      labels:
+        name: sonarqube
+    spec:
+      containers:
+        - image: sonarqube:latest
+          args:
+            - -Dsonar.web.context=/sonar
+          name: sonarqube
+          env:
+            - name: SONARQUBE_JDBC_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: postgres-pwd
+                  key: password
+            - name: SONARQUBE_JDBC_URL
+              value: jdbc:postgresql://sonar-postgres:5432/sonar
+          ports:
+            - containerPort: 9000
+              name: sonarqube
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: sonar-svc
+#  annotations:
+#    traefik.backend: "sonar.k8s.selit.ru"
+  labels:
+    name: sonar-svc
+spec:
+  ports:
+  - protocol: TCP
+    # port: is the abstracted Service port
+    # which can be any port other pods use to access the Service
+    port: 80
+    # targetPort: is the port the container accepts traffic on
+    targetPort: 9000
+  selector:
+    name: sonarqube
+
+---
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  name: sonar
+  annotations:
+    kubernetes.io/ingress.class: traefik
+#  namespace: kube-system
+spec:
+  rules:
+  - host: sonar.k8s.selit.ru
+    http:
+      paths:
+      - path: /
+        backend:
+          serviceName: sonar-svc
+          servicePort: 80
+
