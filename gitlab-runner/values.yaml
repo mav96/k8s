@@ -29,7 +29,7 @@ runnerRegistrationToken: "mUsbyzmMfCheiMJdaTX_"
 ## be retreived from your GitLab Instance. It is token of already registered runner.
 ## ref: (we don't yet have docs for that, but we want to use existing token)
 ##
-# runnerToken: ""
+runnerToken: "8f3e250b62f170d50211edd548cabe"
 #
 ## Unregister all runners before termination
 ##
@@ -50,7 +50,7 @@ unregisterRunners: true
 ## Configure the maximum number of concurrent jobs
 ## ref: https://docs.gitlab.com/runner/configuration/advanced-configuration.html#the-global-section
 ##
-concurrent: 10
+concurrent: 1
 
 ## Defines in seconds how often to check GitLab for a new builds
 ## ref: https://docs.gitlab.com/runner/configuration/advanced-configuration.html#the-global-section
@@ -77,14 +77,14 @@ rbac:
 ## Configure integrated Prometheus metrics exporter
 ## ref: https://docs.gitlab.com/runner/monitoring/#configuration-of-the-metrics-http-server
 metrics:
-  enabled: true
+  enabled: false
 
 ## Configuration for the Pods that that the runner launches for each new job
 ##
 runners:
   ## Default container image to use for builds when none is specified
   ##
-  image: ubuntu:16.04
+  image: ubuntu:18.04
 
   ## Specify one or more imagePullSecrets
   ##
