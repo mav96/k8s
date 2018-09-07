@@ -1,0 +1,9 @@
+kind: Service
+apiVersion: v1
+metadata:
+  labels:
+    name: sonar-postgres
+  name: sonar-postgres
+spec:
+ type: ExternalName
+ externalName: fnc-db.northeurope.cloudapp.azure.com

@@ -29,7 +29,8 @@ runnerRegistrationToken: "mUsbyzmMfCheiMJdaTX_"
 ## be retreived from your GitLab Instance. It is token of already registered runner.
 ## ref: (we don't yet have docs for that, but we want to use existing token)
 ##
-runnerToken: "8f3e250b62f170d50211edd548cabe"
+#runnerToken: "8f3e250b62f170d50211edd548cabe"
+runnerToken: ""
 #
 ## Unregister all runners before termination
 ##
@@ -50,7 +51,7 @@ unregisterRunners: true
 ## Configure the maximum number of concurrent jobs
 ## ref: https://docs.gitlab.com/runner/configuration/advanced-configuration.html#the-global-section
 ##
-concurrent: 1
+concurrent: 2
 
 ## Defines in seconds how often to check GitLab for a new builds
 ## ref: https://docs.gitlab.com/runner/configuration/advanced-configuration.html#the-global-section
@@ -104,7 +105,7 @@ runners:
   ##
   ## ref: https://docs.gitlab.com/ce/ci/runners/#using-tags
   ##
-  # tags: ""
+  tags: "k8s"
 
   ## Run all containers with the privileged flag enabled
   ## This will allow the docker:dind image to run if you need to run Docker
@@ -118,7 +119,7 @@ runners:
 
   ## Namespace to run Kubernetes jobs in (defaults to the same namespace of this release)
   ##
-  # namespace:
+  namespace: gitlab
 
   ## Distributed runners caching
   ## ref: https://gitlab.com/gitlab-org/gitlab-runner/blob/master/docs/configuration/autoscale.md#distributed-runners-caching

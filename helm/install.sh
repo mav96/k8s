@@ -1,3 +1,5 @@
+# see: https://gist.github.com/innovia/fbba8259042f71db98ea8d4ad19bd708
+
 kubectl create serviceaccount tiller --namespace kube-system
 kubectl create -f tiller-clusterrolebinding.yaml
 

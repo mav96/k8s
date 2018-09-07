@@ -12,8 +12,8 @@ spec:
     spec:
       containers:
         - image: sonarqube:latest
-          args:
-            - -Dsonar.web.context=/sonar
+#          args:
+#            - -Dsonar.web.context=/sonar
           name: sonarqube
           env:
             - name: SONARQUBE_JDBC_PASSWORD
