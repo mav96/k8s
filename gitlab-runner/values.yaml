@@ -51,7 +51,7 @@ unregisterRunners: true
 ## Configure the maximum number of concurrent jobs
 ## ref: https://docs.gitlab.com/runner/configuration/advanced-configuration.html#the-global-section
 ##
-concurrent: 2
+concurrent: 1
 
 ## Defines in seconds how often to check GitLab for a new builds
 ## ref: https://docs.gitlab.com/runner/configuration/advanced-configuration.html#the-global-section
