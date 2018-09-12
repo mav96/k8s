@@ -40,6 +40,8 @@ spec:
         app: nfs-provisioner
     spec:
       serviceAccount: nfs-provisioner
+      nodeSelector:
+        disktype: nfs
       containers:
         - name: nfs-provisioner
           image: quay.io/kubernetes_incubator/nfs-provisioner:latest
