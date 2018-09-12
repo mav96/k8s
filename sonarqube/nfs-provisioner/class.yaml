@@ -1,0 +1,8 @@
+kind: StorageClass
+apiVersion: storage.k8s.io/v1
+metadata:
+  name: selit-nfs
+provisioner: k8s.selit.ru/nfs
+parameters:
+  mountOptions: "vers=4.1"  # TODO: reconcile with StorageClass.mountOptions
+
