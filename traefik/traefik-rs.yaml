@@ -25,33 +25,57 @@ spec:
     spec:
       serviceAccountName: traefik-ingress-controller
       terminationGracePeriodSeconds: 60
+      volumes:
+      - name: ssl
+        secret:
+          secretName: traefik-cert
+      - name: config
+        configMap:
+          name: traefik-conf
+      hostNetwork: true
       containers:
       - image: traefik
         name: traefik-ingress-lb
+        imagePullPolicy: Always
+        volumeMounts:
+        - mountPath: "/ssl"
+          name: "ssl"
+        - mountPath: "/config"
+          name: "config"
+#        securityContext:
+#          privileged: true
         ports:
         - name: http
           containerPort: 80
+          hostPort: 80
+          protocol: TCP
+        - name: https
+          containerPort: 443
+          hostPort: 443
+          protocol: TCP
+
         - name: admin
           containerPort: 8080
         args:
+        - --configfile=/config/traefik.toml
         - --api
         - --kubernetes
         - --logLevel=INFO
----
-kind: Service
-apiVersion: v1
-metadata:
-  name: traefik-ingress-service
-  namespace: kube-system
-spec:
-  type: NodePort
-  selector:
-    k8s-app: traefik-ingress-lb
-  ports:
-    - protocol: TCP
-      port: 80
-      nodePort: 30080
-      name: web
+#---
+#kind: Service
+#apiVersion: v1
+#metadata:
+#  name: traefik-ingress-service
+#  namespace: kube-system
+#spec:
+#  selector:
+#    k8s-app: traefik-ingress-lb
+#  type: ClusterIP
+#  ports:
 #    - protocol: TCP
-#      port: 8080
-#      name: admin
+#      port: 80
+#      name: http
+#    - protocol: TCP
+#      port: 443
+#      name: https
+
