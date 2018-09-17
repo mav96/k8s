@@ -4,6 +4,7 @@ echo "Install docker"
 sudo apt-get install -y apt-transport-https ca-certificates curl software-properties-common
 curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo apt-key add -
 sudo add-apt-repository "deb https://download.docker.com/linux/$(. /etc/os-release; echo "$ID") $(lsb_release -cs) stable"
+sudo mkdir -p /etc/docker && echo '{"storage-driver": "overlay2"}' | sudo tee /etc/docker/daemon.json
 sudo apt-get update && sudo apt-get install -y docker-ce=$(apt-cache madison docker-ce | grep 17.03 | head -1 | awk '{print $3}')
 sudo usermod -aG docker $USER
 echo "Install Kubernetes"
