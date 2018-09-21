@@ -1,0 +1,38 @@
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  name: kube-prometheus 
+  namespace: monitoring
+  annotations:
+    kubernetes.io/ingress.class: traefik
+    ingress.kubernetes.io/auth-type: "basic"
+    ingress.kubernetes.io/auth-secret: "monitoring-secret"
+spec:
+  rules:
+  - host: prometheus.k8s.selit.ru
+    http:
+      paths:
+      - path: /
+        backend:
+          serviceName: kube-prometheus
+          servicePort: 9090
+---
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  name: kube-prometheus-grafana
+  namespace: monitoring
+  annotations:
+    kubernetes.io/ingress.class: traefik
+    ingress.kubernetes.io/auth-type: "basic"
+    ingress.kubernetes.io/auth-secret: "monitoring-secret"
+spec:
+  rules:
+  - host: grafana.k8s.selit.ru
+    http:
+      paths:
+      - path: /
+        backend:
+          serviceName: kube-prometheus-grafana 
+          servicePort: 80
+
