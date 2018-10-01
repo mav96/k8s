@@ -288,3 +288,129 @@ STATUS has to change to Ready for all nodes
 ```bash
 sudo kubeadm token create --print-join-command
 ```
+
+
+# Work with k8s
+
+#### Install helm in kube-system
+```bash
+kubectl create serviceaccount tiller --namespace kube-system
+kubectl create -f tiller-clusterrolebinding.yaml
+
+curl https://raw.githubusercontent.com/kubernetes/helm/master/scripts/get > /tmp/get_helm.sh
+sudo bash /tmp/get_helm.sh
+helm init --service-account tiller --upgrade
+```
+
+#### View token for tiller
+```bash
+SECRET_NAME=$(kubectl get sa tiller --namespace kube-system -o json | jq -r '.secrets[].name')
+USER_TOKEN=$(kubectl get secret $SECRET_NAME --namespace kube-system -o json | jq -r '.data["token"]' | base64 -d)
+echo "Token for user tiller:"
+echo $USER_TOKEN
+``` 
+
+#### Install traefik as Ingress 
+```bash
+helm upgrade --install traefik ./helm/traefik --namespace kube-system
+```
+
+
+
+
+#### User for namespace prod
+
+#### Create file prod-access.yaml
+```yaml
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: ci
+  namespace: prod
+
+---
+kind: Role
+apiVersion: rbac.authorization.k8s.io/v1beta1
+metadata:
+  name: ci-access
+  namespace: prod
+rules:
+- apiGroups: ["", "extensions", "apps"]
+  resources: ["*"]
+  verbs: ["*"]
+- apiGroups: ["batch"]
+  resources:
+  - jobs
+  - cronjobs
+  verbs: ["*"]
+
+---
+kind: RoleBinding
+apiVersion: rbac.authorization.k8s.io/v1beta1
+metadata:
+  name: ci-bind
+  namespace: prod
+subjects:
+- kind: ServiceAccount
+  name: ci
+  namespace: prod
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: Role
+  name: ci-access
+```
+
+```bash
+kubectl create namespace prod
+kubectl create -f prod-access.yaml
+```
+
+#### View token for CI
+```bash
+SECRET_NAME=$(kubectl get sa ci --namespace prod -o json | jq -r '.secrets[].name')
+USER_TOKEN=$(kubectl get secret $SECRET_NAME --namespace prod -o json | jq -r '.data["token"]' | base64 -d)
+echo "Token for user:"
+echo $USER_TOKEN
+``` 
+
+#### Install helm for CI 
+```bash
+curl https://raw.githubusercontent.com/kubernetes/helm/master/scripts/get > /tmp/get_helm.sh
+sudo bash /tmp/get_helm.sh
+
+# For user in namespace
+NAMESPACE=prod
+K8S_USER=ci
+helm init --tiller-namespace $NAMESPACE --service-account $K8S_USER --upgrade
+```
+
+### Install soft for CI
+```bash
+sudo apt-get update && sudo apt-get install -y apt-transport-https
+curl -s https://packages.cloud.google.com/apt/doc/apt-key.gpg | sudo apt-key add -
+sudo touch /etc/apt/sources.list.d/kubernetes.list
+echo "deb http://apt.kubernetes.io/ kubernetes-xenial main" | sudo tee -a /etc/apt/sources.list.d/kubernetes.list
+sudo apt-get update
+sudo apt-get install -y kubectl
+kubectl version
+```
+
+### Configure context for CI
+```bash
+NAMESPACE=prod
+K8S_USER=ci
+kubectl config set-cluster kubernetes --insecure-skip-tls-verify=true --server=https://masterkub.tran.lan:6443
+kubectl config set-credentials $K8S_USER --token=TOKEN
+kubectl config set-context prod --cluster=kubernetes --user=$K8S_USER --namespace=$NAMESPACE
+kubectl config use-context prod
+kubectl config view
+helm init --client-only
+helm ls --tiller-namespace $NAMESPACE
+```
+
+### Run service Redis  (we work in namespace "prod")
+```bash
+helm upgrade --install redis ./helm/redis --tiller-namespace prod --namespace prod
+```
+
