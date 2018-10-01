@@ -359,6 +359,32 @@ roleRef:
   apiGroup: rbac.authorization.k8s.io
   kind: Role
   name: ci-access
+
+---
+kind: ClusterRole
+apiVersion: rbac.authorization.k8s.io/v1
+metadata:
+  name: ci-access
+rules:
+- apiGroups: [""]
+  resources: ["namespaces"]
+  verbs: ["get", "list", "watch"]
+- nonResourceURLs: ["*"]
+  verbs: ["get", "watch", "list"]
+
+---
+kind: ClusterRoleBinding
+apiVersion: rbac.authorization.k8s.io/v1beta1
+metadata:
+  name: ci-cluster-bind
+subjects:
+- kind: ServiceAccount
+  name: ci
+  namespace: prod
+roleRef:
+  kind: ClusterRole
+  name: ci-access
+  apiGroup: rbac.authorization.k8s.io
 ```
 
 ```bash
