@@ -435,7 +435,44 @@ helm init --client-only
 helm ls --tiller-namespace $NAMESPACE
 ```
 
-### Run service Redis  (we work in namespace "prod")
+
+### Before start installing services our need get access to the registry.
+##### For AWS:
+
+##### Install aws client:
+```bash
+sudo apt-get update && sudo apt-get install -y python3-pip 
+sudo pip3 install --upgrade pip
+sudo pip3 install awscli
+```
+Put in .aws credentials fo AWS
+
+#### Check access for AWS:
+```bash
+aws ecr get-login --no-include-email
+```
+
+#### Create registry key in k8s (Only for 12 hours):
+```bash
+kubectl delete secret registrykey -n prod
+kubectl create secret -n prod docker-registry registrykey \
+--docker-server=https://amazonaws.com \
+--docker-username=AWS --docker-password=\
+`aws ecr get-authorization-token --output text --query 'authorizationData[].authorizationToken' | base64 -d | cut -d: -f2`
+```
+
+### Install service
+```bash
+SERVICE=Service_Name bash -c 'helm upgrade --install ${SERVICE} -f ./${SERVICE}.yaml ./ --tiller-namespace prod --namespace prod'
+```
+
+### Remove service
+```bash
+SERVICE=Service_Name bash -c 'helm delete --purge ${SERVICE} --tiller-namespace iikotransport-prod'
+```
+
+
+### For example: Run service Redis
 ```bash
 helm upgrade --install redis ./helm/redis --tiller-namespace prod --namespace prod
 ```
