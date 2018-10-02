@@ -312,7 +312,7 @@ echo $USER_TOKEN
 
 #### Install traefik as Ingress 
 ```bash
-helm upgrade --install traefik ./helm/traefik --namespace kube-system
+kubectl apply -f traefik.yaml
 ```
 
 
