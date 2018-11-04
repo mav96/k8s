@@ -144,11 +144,11 @@ Copy required files to other control plane nodes ( to kub-0{2-3}.tran.lan )
 /etc/kubernetes/pki/etcd/ca.crt
 /etc/kubernetes/pki/etcd/ca.key
 /etc/kubernetes/admin.conf
+/var/lib/kubelet/kubeadm-flags.env
 ```
 
 Script copy_kub-01.sh
 ```bash
-sudo tar rvf  archive.tar  /path/to/newfile.txt
 sudo tar rvf  archive.tar  /etc/kubernetes/pki/ca.crt
 sudo tar rvf  archive.tar  /etc/kubernetes/pki/ca.key
 sudo tar rvf  archive.tar  /etc/kubernetes/pki/sa.key
@@ -187,7 +187,8 @@ Run the kubeadm phase commands to bootstrap the kubelet:
 ```bash
 sudo kubeadm alpha phase certs all --config kubeadm-config.yaml
 sudo kubeadm alpha phase kubelet config write-to-disk --config kubeadm-config.yaml
-sudo kubeadm alpha phase kubelet write-env-file --config kubeadm-config.yaml
+##sudo kubeadm alpha phase kubelet write-env-file --config kubeadm-config.yaml
+##copy /var/lib/kubelet/kubeadm-flags.env
 sudo kubeadm alpha phase kubeconfig kubelet --config kubeadm-config.yaml
 sudo systemctl start kubelet
 ```
